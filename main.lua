@@ -1,10 +1,11 @@
+-- Lokasi: LocalScript di StarterGui
+
 -- SERVICES
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- TRANSISI "Made by Jope"
+-- GUI TRANSISI "Made by Jope"
 local introGui = Instance.new("ScreenGui")
 introGui.Name = "IntroGui"
 introGui.ResetOnSpawn = false
@@ -13,7 +14,7 @@ introGui.Parent = playerGui
 
 local background = Instance.new("Frame")
 background.Size = UDim2.new(1, 0, 1, 0)
-background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 background.BackgroundTransparency = 0.5
 background.BorderSizePixel = 0
 background.Parent = introGui
@@ -24,195 +25,228 @@ label.Position = UDim2.new(0.5, 0, 0.5, 0)
 label.Size = UDim2.new(0, 300, 0, 50)
 label.Text = "Made by Jope"
 label.TextColor3 = Color3.new(1, 1, 1)
+label.TextTransparency = 0
 label.BackgroundTransparency = 1
 label.TextScaled = true
 label.Font = Enum.Font.SourceSansSemibold
 label.Parent = background
 
-task.wait(3)
+wait(3)
 introGui:Destroy()
 
--- GUI UTAMA
-local gui = Instance.new("ScreenGui")
+-- ========== KICK TIMER GUI MULAI DI SINI ==========
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "KickTimerGui"
 gui.ResetOnSpawn = false
-gui.Parent = playerGui
 
+-- Main Frame
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 350, 0, 260)
-mainFrame.Position = UDim2.new(0.5, -175, 0.5, -130)
-mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+mainFrame.Size = UDim2.new(0, 300, 0, 250)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -125)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BorderSizePixel = 0
+mainFrame.Parent = gui
 mainFrame.Active = true
 mainFrame.Draggable = true
-mainFrame.Parent = gui
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "Kick Timer GUI"
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 18
-title.TextColor3 = Color3.new(1, 1, 1)
-title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-title.Parent = mainFrame
+-- Header
+local header = Instance.new("TextLabel")
+header.Size = UDim2.new(1, -40, 0, 30)
+header.Position = UDim2.new(0, 10, 0, 5)
+header.Text = "⏳ Kick Timer"
+header.Font = Enum.Font.SourceSansSemibold
+header.TextSize = 22
+header.TextColor3 = Color3.new(1, 1, 1)
+header.BackgroundTransparency = 1
+header.TextXAlignment = Enum.TextXAlignment.Left
+header.Parent = mainFrame
 
--- INPUT FIELDS
-local function createInput(name, pos)
-	local label = Instance.new("TextLabel")
-	label.Text = name .. ":"
-	label.Size = UDim2.new(0, 60, 0, 30)
-	label.Position = pos
-	label.TextColor3 = Color3.new(1,1,1)
-	label.BackgroundTransparency = 1
-	label.Font = Enum.Font.SourceSans
-	label.TextSize = 16
-	label.Parent = mainFrame
+-- Minimize Button
+local minimize = Instance.new("TextButton")
+minimize.Text = "-"
+minimize.Size = UDim2.new(0, 30, 0, 30)
+minimize.Position = UDim2.new(1, -35, 0, 5)
+minimize.Font = Enum.Font.SourceSansBold
+minimize.TextSize = 22
+minimize.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+minimize.TextColor3 = Color3.new(1, 1, 1)
+minimize.Parent = mainFrame
 
+-- Input Fields
+local inputs = {}
+local labels = {"Jam", "Menit", "Detik"}
+
+for i, label in ipairs(labels) do
 	local box = Instance.new("TextBox")
-	box.Size = UDim2.new(0, 60, 0, 30)
-	box.Position = pos + UDim2.new(0, 65, 0, 0)
-	box.PlaceholderText = "0"
+	box.PlaceholderText = label
 	box.Text = ""
-	box.Name = name
-	box.TextSize = 16
+	box.Size = UDim2.new(0.3, -5, 0, 35)
+	box.Position = UDim2.new((i - 1) * 0.33 + 0.025, 0, 0, 45)
+	box.Font = Enum.Font.SourceSans
+	box.TextSize = 20
+	box.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 	box.TextColor3 = Color3.new(1, 1, 1)
-	box.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-	box.ClearTextOnFocus = false
 	box.Parent = mainFrame
-
-	return box
+	inputs[label] = box
 end
 
-local hourBox = createInput("Jam", UDim2.new(0, 20, 0, 40))
-local minBox = createInput("Menit", UDim2.new(0, 20, 0, 80))
-local secBox = createInput("Detik", UDim2.new(0, 20, 0, 120))
-
--- COUNTDOWN LABEL
-local countdownLabel = Instance.new("TextLabel", mainFrame)
-countdownLabel.Size = UDim2.new(0, 200, 0, 30)
-countdownLabel.Position = UDim2.new(0, 140, 0, 160)
+-- Countdown Label
+local countdownLabel = Instance.new("TextLabel")
+countdownLabel.Size = UDim2.new(1, -20, 0, 30)
+countdownLabel.Position = UDim2.new(0, 10, 0, 90)
 countdownLabel.Text = "Countdown: 00:00:00"
-countdownLabel.TextSize = 16
+countdownLabel.Font = Enum.Font.SourceSans
+countdownLabel.TextSize = 20
 countdownLabel.TextColor3 = Color3.new(1, 1, 1)
 countdownLabel.BackgroundTransparency = 1
-countdownLabel.Font = Enum.Font.SourceSans
+countdownLabel.Parent = mainFrame
 
--- STATE
-local running, paused = false, false
-local remainingTime = 0
-local timerConnection
+-- Buttons
+local runButton = Instance.new("TextButton")
+runButton.Size = UDim2.new(1, -20, 0, 40)
+runButton.Position = UDim2.new(0, 10, 0, 130)
+runButton.Text = "Run"
+runButton.Font = Enum.Font.SourceSansBold
+runButton.TextSize = 22
+runButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+runButton.TextColor3 = Color3.new(1, 1, 1)
+runButton.Parent = mainFrame
 
--- FORMAT FUNCTION
-local function formatTime(t)
-	local h = math.floor(t / 3600)
-	local m = math.floor((t % 3600) / 60)
-	local s = math.floor(t % 60)
+local terminated = Instance.new("TextButton")
+terminated.Size = UDim2.new(1, -20, 0, 40)
+terminated.Position = UDim2.new(0, 10, 0, 180)
+terminated.Text = "Terminated"
+terminated.Font = Enum.Font.SourceSansBold
+terminated.TextSize = 22
+terminated.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+terminated.TextColor3 = Color3.new(1, 1, 1)
+terminated.Parent = mainFrame
+
+local resumeButton = Instance.new("TextButton")
+resumeButton.Size = UDim2.new(0.5, -15, 0, 40)
+resumeButton.Position = UDim2.new(0, 10, 0, 130)
+resumeButton.Text = "Pause"
+resumeButton.Font = Enum.Font.SourceSansBold
+resumeButton.TextSize = 22
+resumeButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+resumeButton.TextColor3 = Color3.new(1, 1, 1)
+resumeButton.Visible = false
+resumeButton.Parent = mainFrame
+
+local resetButton = Instance.new("TextButton")
+resetButton.Size = UDim2.new(0.5, -15, 0, 40)
+resetButton.Position = UDim2.new(0.5, 5, 0, 130)
+resetButton.Text = "Reset"
+resetButton.Font = Enum.Font.SourceSansBold
+resetButton.TextSize = 22
+resetButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+resetButton.TextColor3 = Color3.new(1, 1, 1)
+resetButton.Visible = false
+resetButton.Parent = mainFrame
+
+-- Restore Icon
+local restoreIcon = Instance.new("TextButton")
+restoreIcon.Size = UDim2.new(0, 100, 0, 30)
+restoreIcon.Position = UDim2.new(0, 10, 0, 10)
+restoreIcon.Text = "⏳ Kick Timer"
+restoreIcon.Visible = false
+restoreIcon.Parent = gui
+restoreIcon.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+restoreIcon.TextColor3 = Color3.new(1, 1, 1)
+restoreIcon.Active = true
+restoreIcon.Draggable = true
+
+-- Minimize/Restore
+minimize.MouseButton1Click:Connect(function()
+	mainFrame.Visible = false
+	restoreIcon.Visible = true
+end)
+restoreIcon.MouseButton1Click:Connect(function()
+	mainFrame.Visible = true
+	restoreIcon.Visible = false
+end)
+
+-- Timer logic
+local running = false
+local paused = false
+local countdown = 0
+local timerConn
+
+local function formatTime(seconds)
+	local h = math.floor(seconds / 3600)
+	local m = math.floor((seconds % 3600) / 60)
+	local s = seconds % 60
 	return string.format("%02d:%02d:%02d", h, m, s)
 end
 
--- UPDATE COUNTDOWN DISPLAY
-local function updateCountdown()
-	countdownLabel.Text = "Countdown: " .. formatTime(remainingTime)
-end
-
--- START TIMER
 local function startTimer()
-	if timerConnection then timerConnection:Disconnect() end
-	timerConnection = RunService.RenderStepped:Connect(function()
+	if timerConn then timerConn:Disconnect() end
+	timerConn = game:GetService("RunService").RenderStepped:Connect(function(dt)
 		if running and not paused then
-			if remainingTime > 0 then
-				remainingTime -= 1 / 60
-				updateCountdown()
-			else
+			countdown -= dt
+			if countdown <= 0 then
 				player:Kick("Waktu habis!")
-				timerConnection:Disconnect()
+				running = false
+				timerConn:Disconnect()
+			else
+				countdownLabel.Text = "Countdown: " .. formatTime(math.floor(countdown))
 			end
 		end
 	end)
 end
 
--- BUTTONS
-local runButton = Instance.new("TextButton", mainFrame)
-runButton.Size = UDim2.new(0.5, -5, 0, 30)
-runButton.Position = UDim2.new(0, 0, 1, -30)
-runButton.Text = "Run"
-runButton.TextSize = 16
-runButton.TextColor3 = Color3.new(1, 1, 1)
-runButton.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
-
-local terminatedButton = Instance.new("TextButton", mainFrame)
-terminatedButton.Size = UDim2.new(0.5, -5, 0, 30)
-terminatedButton.Position = UDim2.new(0.5, 5, 1, -30)
-terminatedButton.Text = "Terminated"
-terminatedButton.TextSize = 16
-terminatedButton.TextColor3 = Color3.new(1, 1, 1)
-terminatedButton.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
-
--- RESET & RESUME BUTTONS (dijadikan satu baris)
-local resetButton = Instance.new("TextButton", mainFrame)
-resetButton.Size = UDim2.new(0.5, -5, 0, 30)
-resetButton.Position = UDim2.new(0, 140, 0, 200)
-resetButton.Text = "Reset"
-resetButton.Visible = false
-resetButton.TextSize = 16
-resetButton.TextColor3 = Color3.new(1, 1, 1)
-resetButton.BackgroundColor3 = Color3.fromRGB(255, 140, 0)
-
-local resumeButton = Instance.new("TextButton", mainFrame)
-resumeButton.Size = UDim2.new(0.5, -5, 0, 30)
-resumeButton.Position = UDim2.new(0.5, 145, 0, 200)
-resumeButton.Text = "Resume"
-resumeButton.Visible = false
-resumeButton.TextSize = 16
-resumeButton.TextColor3 = Color3.new(1, 1, 1)
-resumeButton.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
-
--- BUTTON LOGIC
+-- Run
 runButton.MouseButton1Click:Connect(function()
-	if not running then
-		local jam = tonumber(hourBox.Text) or 0
-		local menit = math.clamp(tonumber(minBox.Text) or 0, 0, 60)
-		local detik = math.clamp(tonumber(secBox.Text) or 0, 0, 60)
+	local h = tonumber(inputs["Jam"].Text) or 0
+	local m = tonumber(inputs["Menit"].Text) or 0
+	local s = tonumber(inputs["Detik"].Text) or 0
 
-		remainingTime = jam * 3600 + menit * 60 + detik
-		if remainingTime <= 0 then return end
+	if m > 60 then m = 60 inputs["Menit"].Text = "60" end
+	if s > 60 then s = 60 inputs["Detik"].Text = "60" end
 
-		running = true
+	countdown = h * 3600 + m * 60 + s
+	if countdown <= 0 then
+		countdownLabel.Text = "Masukkan waktu valid!"
+		return
+	end
+
+	running = true
+	paused = false
+	startTimer()
+	countdownLabel.Text = "Countdown: " .. formatTime(math.floor(countdown))
+
+	runButton.Visible = false
+	resumeButton.Visible = true
+	resetButton.Visible = true
+end)
+
+-- Resume / Pause
+resumeButton.MouseButton1Click:Connect(function()
+	if paused then
 		paused = false
-		runButton.Text = "Pause"
-		updateCountdown()
-		startTimer()
+		resumeButton.Text = "Pause"
 	else
 		paused = true
-		running = true
-		runButton.Visible = false
-		resetButton.Visible = true
-		resumeButton.Visible = true
+		resumeButton.Text = "Resume"
 	end
 end)
 
-resumeButton.MouseButton1Click:Connect(function()
-	paused = false
-	runButton.Visible = true
-	runButton.Text = "Pause"
-	resetButton.Visible = false
-	resumeButton.Visible = false
-end)
-
+-- Reset
 resetButton.MouseButton1Click:Connect(function()
-	paused = false
 	running = false
-	remainingTime = 0
-	updateCountdown()
+	paused = false
+	countdown = 0
+	countdownLabel.Text = "Countdown: 00:00:00"
+	resumeButton.Text = "Pause"
 	runButton.Visible = true
-	runButton.Text = "Run"
-	resetButton.Visible = false
 	resumeButton.Visible = false
+	resetButton.Visible = false
 end)
 
-terminatedButton.MouseButton1Click:Connect(function()
-	if timerConnection then
-		timerConnection:Disconnect()
-	end
+-- Terminate
+terminated.MouseButton1Click:Connect(function()
+	if timerConn then timerConn:Disconnect() end
+	running = false
 	gui:Destroy()
 end)
