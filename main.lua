@@ -2,6 +2,7 @@
 
 -- SERVICES
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -15,7 +16,7 @@ introGui.Parent = playerGui
 local background = Instance.new("Frame")
 background.Size = UDim2.new(1, 0, 1, 0)
 background.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-background.BackgroundTransparency = 0.5
+background.BackgroundTransparency = 1
 background.BorderSizePixel = 0
 background.Parent = introGui
 
@@ -25,13 +26,30 @@ label.Position = UDim2.new(0.5, 0, 0.5, 0)
 label.Size = UDim2.new(0, 300, 0, 50)
 label.Text = "Made by Jope"
 label.TextColor3 = Color3.new(1, 1, 1)
-label.TextTransparency = 0
+label.TextTransparency = 1
 label.BackgroundTransparency = 1
 label.TextScaled = true
 label.Font = Enum.Font.SourceSansSemibold
 label.Parent = background
 
-wait(3)
+-- Fade-in Tween
+local fadeInBackground = TweenService:Create(background, TweenInfo.new(1), {BackgroundTransparency = 0.5})
+local fadeInLabel = TweenService:Create(label, TweenInfo.new(1), {TextTransparency = 0})
+
+-- Fade-out Tween
+local fadeOutBackground = TweenService:Create(background, TweenInfo.new(1), {BackgroundTransparency = 1})
+local fadeOutLabel = TweenService:Create(label, TweenInfo.new(1), {TextTransparency = 1})
+
+fadeInBackground:Play()
+fadeInLabel:Play()
+fadeInLabel.Completed:Wait()
+
+task.wait(3)
+
+fadeOutBackground:Play()
+fadeOutLabel:Play()
+fadeOutLabel.Completed:Wait()
+
 introGui:Destroy()
 
 -- ========== KICK TIMER GUI MULAI DI SINI ==========
